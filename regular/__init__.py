@@ -8,8 +8,18 @@ class Regular_vals:
 class Regular:
     __name__ = "Regular"
 
-    def __init__(self, first=Regular_vals()):
+    def __init__(self, convert=None,first=None):
+        if not first: 
+            first = Regular_vals()
         self.first = first
+        if convert:
+            try:
+                num_ = 0
+                while True:
+                    self.add(convert[num_])
+                    num_+=1;
+            except IndexError:
+                pass
 
     def add(self, *values):
         now = self.first
@@ -19,7 +29,7 @@ class Regular:
             now.next = Regular_vals()
             now = now.next
             now.data = value
-        return Regular(first=self.first)
+        return self
 
     def get(self, num: int):
         now = self.first
@@ -81,46 +91,77 @@ class Regular:
         now.next = new_element
         return True
 
-    def __getitem__(self, num: int):
-        now = self.first
-        for _ in range(num+1):
-            if now.next != None:
-                now = now.next
-            else: 
-                raise IndexError('Regular index out of range.')
-        return now.data
+    def __getitem__(self, args):
+        if not isinstance(args, slice):
+            now = self.first
+            for _ in range(args+1):
+                if now.next != None:
+                    now = now.next
+                else: 
+                    raise IndexError('Regular index out of range.')
+            return now.data
+        else:
+            start_ = args.start
+            stop_ = args.stop
+            step_ = args.step
+            if step_ == None: step_ = 1
+            if start_ == None: start_ = 0
+            if stop_ == None: stop_ = len(self)
+            keys_ = Regular(range(start_, stop_, step_))
+            new_regular = Regular()
+            for num in keys_:
+                now = self.first
+                for _ in range(num+1):
+                    if now.next != None:
+                        now = now.next
+                    else:
+                        raise IndexError('Regular index out of range.')
+                new_regular.add(now.data)
+            return new_regular
 
     def __setitem__(self, key:int, value) -> bool:
         if key == None or key == '':
             self.add(value)
             return True
         now = self.first
-        for _ in range(key+1):
-            if now.next != None:
-                now = now.next
-            else:
-                now.next = Regular_vals()
-                now = now.next
-                now.data = value
-                return True
-        now.data = value
+        if not isinstance(key, slice):
+            for _ in range(key+1):
+                if now.next != None:
+                    now = now.next
+                else:
+                    now.next = Regular_vals()
+                    now = now.next
+                    now.data = value
+                    return True
+            now.data = value
+        else:
+            start_ = key.start
+            stop_ = key.stop
+            step_ = key.step
+            if step_ == None: step_ = 1
+            if start_ == None: start_ = 0
+            if stop_ == None: stop_ = len(self)
+            keys_ = Regular(range(start_, stop_, step_))
+            new_regular = Regular()
+            for num in keys_:
+                now = self.first
+                for _ in range(num+1):
+                    if now.next != None:
+                        now = now.next
+                    else:
+                        now.next = Regular_vals()
+                        now = now.next
+                        now.data = value
+                        break
+                    now.data = value
         return True
 
 
     def __str__(self):
         now = self.first
         if now.next == None:
-            return 'None'
-        string = '~('
-        while now.next != None:
-            now = now.next
-            if isinstance(now.data, int):
-                string += str(now.data) + ', '
-            elif isinstance(now.data, str):
-                string += '"' + str(now.data) + '", '
-            else:
-                string += str(now.data) + ', '
-        string = string[:len(string)-2] + ')~'
+            return 'None' 
+        string = '~(' + ', '.join(str(x) for x in self) + ')~'
         return string
 
     def __len__(self):
