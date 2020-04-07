@@ -11,10 +11,11 @@ regul[:3] = 27
 print('Element 3: ', regul[:4])
 print('len: ', len(regul))
 
-# regul[123]
-
 regul.sort()
 regul.delete(4)
 print(regul)
 regul.insert(2, "asd")
 print(list(regul))
+
+for i in regul:
+	print(i)
