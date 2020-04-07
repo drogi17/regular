@@ -8,10 +8,8 @@ class Regular_vals:
 class Regular:
     __name__ = "Regular"
 
-    def __init__(self, convert=None,first=None):
-        if not first: 
-            first = Regular_vals()
-        self.first = first
+    def __init__(self, convert=None):
+        self.first = Regular_vals()
         if convert:
             try:
                 num_ = 0
@@ -20,7 +18,6 @@ class Regular:
                     num_+=1;
             except IndexError:
                 pass
-
     def add(self, *values):
         now = self.first
         while now.next != None:
@@ -171,3 +168,25 @@ class Regular:
             now = now.next
             len_ += 1
         return len_ 
+
+    def __rshift__(self, regul):
+        new_regul = Regular()
+        now_1 = self.first
+        now_2 = regul.first
+        while now_1.next != None or now_2.next != None:
+            now_1 = now_1.next
+            now_2 = now_2.next
+            new_regul.add(now_1.data + now_2.data)
+        return new_regul
+
+    def __add__(self, regul):
+        new_regul = Regular()
+        now_1 = self.first
+        now_2 = regul.first
+        while now_1.next != None:
+            now_1 = now_1.next
+            new_regul.add(now_1.data)
+        while now_2.next != None:
+            now_2 = now_2.next
+            new_regul.add(now_2.data)
+        return new_regul
