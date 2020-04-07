@@ -1,3 +1,5 @@
+from copy import copy
+
 class Regular_vals:
     def __init__(self, data=None):
         self.data = data
@@ -17,7 +19,7 @@ class Regular:
             now.next = Regular_vals()
             now = now.next
             now.data = value
-        return Regular(self.first)
+        return Regular(first=self.first)
 
     def get(self, num: int):
         now = self.first
@@ -40,6 +42,14 @@ class Regular:
         del to_del
         return True
 
+    def clear(self) -> bool:
+        now = self.first
+        while (now.next != None):
+            now = now.next
+            del self.first
+            self.first = now
+        return True
+
     def sort(self) -> bool:
         now_global = self.first
         while (now_global.next != None):
@@ -55,16 +65,35 @@ class Regular:
             now_global = now_global.next
         return True
 
+    def insert(self, pos: int, value):
+        now = self.first
+        for _ in range(pos):
+            if now.next != None:
+                now = now.next
+            else:
+                now.next = Regular_vals()
+                now = now.next
+                now.data = value
+                return True
+        new_element = Regular_vals()
+        new_element.data = value
+        new_element.next = now.next
+        now.next = new_element
+        return True
+
     def __getitem__(self, num: int):
         now = self.first
         for _ in range(num+1):
             if now.next != None:
                 now = now.next
             else: 
-                return None
+                raise IndexError('Regular index out of range.')
         return now.data
 
     def __setitem__(self, key:int, value) -> bool:
+        if key == None or key == '':
+            self.add(value)
+            return True
         now = self.first
         for _ in range(key+1):
             if now.next != None:
@@ -80,6 +109,8 @@ class Regular:
 
     def __str__(self):
         now = self.first
+        if now.next == None:
+            return 'None'
         string = '~('
         while now.next != None:
             now = now.next
